@@ -1,4 +1,6 @@
 # NeuroBridge — Frontend
+Live: https://neurobridge.asyrafisa.com
+(UI prototype: backend and AI not connected)
 
 The single-page React app: **React 19 + Vite 8 + Tailwind CSS v4 + shadcn/ui**.
 
