@@ -1,0 +1,558 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/*
+  The app has a single light theme. shadcn primitives ship `dark:` utilities,
+  and Tailwind's default `dark:` follows the OS setting — which painted stray
+  dark fills on inputs for anyone in macOS dark mode. Bind `dark:` to an
+  explicit `.dark` class instead (never set), so those utilities stay inert.
+*/
+@custom-variant dark (&:is(.dark *));
+
+/*
+  Tailwind v4 entry point.
+
+  This file is the ONLY place that defines design tokens. Everything in `@theme`
+  becomes a utility class AND a CSS variable, so components never hard-code
+  colours, fonts, spacing or radii — see AGENTS.md → "Design system".
+
+  Visual language: the NeuroBridge design spec (Claude Design handoff,
+  `DESIGN.md`) — Figtree, an indigo/teal/slate palette on a #F7F8FB canvas,
+  soft fills instead of borders, large rounded cards and pill controls.
+  "Calm by default": flat surfaces, shadows only on floating elements.
+
+  The Material 3 role names (`primary`, `surface-container-*`, `on-surface` …)
+  are kept so existing components still compile; their values now follow the
+  spec. New design-only roles (tints, ink, urgent, mood) are added below them.
+*/
+@theme {
+  /* ------------------------------------------------------------------ *
+   * Font families — Figtree everywhere (400–800)
+   * ------------------------------------------------------------------ */
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading: var(--font-sans);
+
+  /* Design aliases so markup from the reference reads 1:1. */
+  --font-display-lg: var(--font-sans);
+  --font-display-lg-mobile: var(--font-sans);
+  --font-headline-lg: var(--font-sans);
+  --font-headline-md: var(--font-sans);
+  --font-headline-sm: var(--font-sans);
+  --font-title-md: var(--font-sans);
+  --font-body-lg: var(--font-sans);
+  --font-body-md: var(--font-sans);
+  --font-body-sm: var(--font-sans);
+  --font-label-lg: var(--font-sans);
+  --font-label-md: var(--font-sans);
+  --font-label-sm: var(--font-sans);
+
+  /* ------------------------------------------------------------------ *
+   * Type scale — size + line-height + weight + tracking together.
+   * Mirrors DESIGN.md → Typography. Keep TYPE_SCALE in lib/utils.js in sync.
+   * ------------------------------------------------------------------ */
+  /* Page title (dashboard greeting, page headers) — 44 / 800 */
+  --text-display-lg: 2.75rem;
+  --text-display-lg--line-height: 1.05;
+  --text-display-lg--font-weight: 800;
+  --text-display-lg--letter-spacing: -0.03em;
+
+  /* Page title below sm */
+  --text-display-lg-mobile: 2.125rem;
+  --text-display-lg-mobile--line-height: 1.1;
+  --text-display-lg-mobile--font-weight: 800;
+  --text-display-lg-mobile--letter-spacing: -0.03em;
+
+  /* Hero task title / sign-in heading — 32 / 800 */
+  --text-headline-lg: 2rem;
+  --text-headline-lg--line-height: 1.15;
+  --text-headline-lg--font-weight: 800;
+  --text-headline-lg--letter-spacing: -0.02em;
+
+  /* Mood label, big numbers — 28 / 800 */
+  --text-headline-md: 1.75rem;
+  --text-headline-md--line-height: 1.2;
+  --text-headline-md--font-weight: 800;
+  --text-headline-md--letter-spacing: -0.02em;
+
+  /* Card title — 22 / 800 */
+  --text-headline-sm: 1.375rem;
+  --text-headline-sm--line-height: 1.25;
+  --text-headline-sm--font-weight: 800;
+  --text-headline-sm--letter-spacing: -0.01em;
+
+  /* Small card / row title — 19 / 800 */
+  --text-title-md: 1.1875rem;
+  --text-title-md--line-height: 1.3;
+  --text-title-md--font-weight: 800;
+
+  /* Body — nav items, row titles, buttons — 17 / 600 */
+  --text-body-lg: 1.0625rem;
+  --text-body-lg--line-height: 1.5;
+  --text-body-lg--font-weight: 600;
+
+  /* Body — 16 / 600 */
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.5;
+  --text-body-md--font-weight: 600;
+
+  /* Secondary body / meta — 15 / 600 */
+  --text-body-sm: 0.9375rem;
+  --text-body-sm--line-height: 1.45;
+  --text-body-sm--font-weight: 600;
+
+  /* Labels — field labels, chip text */
+  --text-label-lg: 1rem;
+  --text-label-lg--line-height: 1.4;
+  --text-label-lg--font-weight: 700;
+
+  --text-label-md: 0.9375rem;
+  --text-label-md--line-height: 1.35;
+  --text-label-md--font-weight: 700;
+
+  --text-label-sm: 0.8125rem;
+  --text-label-sm--line-height: 1.3;
+  --text-label-sm--font-weight: 700;
+
+  /* Eyebrow — uppercase section label — 13–15 / 800 / .06em */
+  --text-eyebrow: 0.875rem;
+  --text-eyebrow--line-height: 1.3;
+  --text-eyebrow--font-weight: 800;
+  --text-eyebrow--letter-spacing: 0.06em;
+
+  /* ------------------------------------------------------------------ *
+   * Layout rhythm
+   * ------------------------------------------------------------------ */
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2rem;
+  --spacing-gutter: 1rem;
+  --spacing-gutter-tablet: 1.25rem;
+  --spacing-gutter-desktop: 1.5rem;
+  --spacing-margin: 1rem;
+  --spacing-margin-tablet: 1.75rem;
+  --spacing-margin-desktop: 2.5rem;
+  /* Card padding (24–30px in the spec) */
+  --spacing-card: 1.75rem;
+  --spacing-card-sm: 1.375rem;
+
+  /* ------------------------------------------------------------------ *
+   * Container widths
+   * ------------------------------------------------------------------ */
+  --container-page: 73.75rem; /* 1180px — main column */
+  --container-sidebar: 14.25rem; /* 228px */
+  --container-chat: 45rem; /* 720px */
+  --container-auth: 27.5rem; /* 440px — sign-in column */
+
+  /* ------------------------------------------------------------------ *
+   * Shape — DESIGN.md: cards 26–32 · inner panels 18–22 · tiles 14–17 ·
+   * step rows 12 · buttons and chips are pills (rounded-full).
+   * ------------------------------------------------------------------ */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.75rem; /* step rows, small controls */
+  --radius-xl: 0.875rem; /* nav items, menu rows */
+  --radius-2xl: 1rem; /* inputs, icon tiles */
+  --radius-3xl: 1.375rem; /* inner panels */
+  --radius-4xl: 2rem; /* cards */
+  --radius-tile: 1.0625rem;
+  --radius-panel: 1.125rem;
+  --radius-card: 2rem;
+  --radius-card-sm: 1.625rem;
+
+  /* ------------------------------------------------------------------ *
+   * Elevation — flat by default; shadows only on floating elements.
+   * ------------------------------------------------------------------ */
+  --shadow-card: 0 2px 10px rgb(15 23 42 / 0.035); /* reflection cards */
+  --shadow-float: 0 16px 40px rgb(15 23 42 / 0.14);
+  --shadow-float-strong: 0 16px 40px rgb(15 23 42 / 0.25);
+  --shadow-glass: 0 24px 60px rgb(79 70 229 / 0.18), inset 0 1px 0 rgb(255 255 255 / 0.8);
+  --shadow-thumb:
+    inset 0 1px 1px rgb(255 255 255 / 0.9), inset 0 -2px 4px rgb(15 23 42 / 0.06),
+    0 1px 2px rgb(15 23 42 / 0.08), 0 6px 16px rgb(15 23 42 / 0.12);
+
+  /* ------------------------------------------------------------------ *
+   * Core palette (DESIGN.md → Colour)
+   * ------------------------------------------------------------------ */
+  --color-ink: #1e293b; /* body text, dark buttons, floating timer */
+  --color-ink-soft: #475569; /* paragraph text on tinted/glass surfaces */
+  --color-slate: #64748b; /* secondary text, icons, metadata */
+  --color-slate-soft: #94a3b8; /* inactive nav icons, faint labels */
+  --color-canvas: #f7f8fb; /* page background */
+  --color-fill: #f1f5f9; /* segmented controls, subtle fills, inactive chips */
+  --color-fill-soft: #f8fafc; /* step lists, nested panels */
+  --color-divider: #e2e8f0; /* card borders, dividers */
+  --color-divider-soft: #eef2f6; /* reflection card border */
+  --color-muted-border: #cbd5e1; /* inputs, inactive dots, switch off */
+  --color-track: #eceef2; /* slider track */
+
+  --color-primary-hover: #4338ca;
+  --color-indigo-ink: #3730a3; /* text on indigo tints */
+  --color-tertiary-soft: #a5b4fc; /* on-dark accent, low-mood fill */
+  --color-teal-ink: #0f766e; /* text on teal tints, success copy */
+
+  /* Tints — task / card backgrounds */
+  --color-tint-indigo: #e0e7ff;
+  --color-tint-indigo-soft: #eef2ff;
+  --color-tint-indigo-border: #c7d2fe;
+  --color-tint-teal: #ccfbf1;
+  --color-tint-teal-soft: #f0fdfa;
+  --color-tint-slate: #f1f5f9;
+  --color-tint-violet: #f5f3ff;
+  --color-glow-violet: #8b5cf6; /* sign-in backdrop glow */
+
+  /* Mood slider (check-in) */
+  --color-mood-low: #a5b4fc;
+  --color-mood-mid: #cbd5e1;
+  --color-mood-high: #5eead4;
+
+  /* Urgent — support requests only */
+  --color-urgent: oklch(0.55 0.2 25);
+  --color-urgent-ink: oklch(0.5 0.19 25);
+  --color-urgent-container: oklch(0.97 0.025 25);
+  --color-urgent-border: oklch(0.82 0.09 25);
+
+  /* Employer alerts — "Urgent: act now" (red) and "Today" (amber) */
+  --color-alert-red-surface: #fff5f5;
+  --color-alert-red-border: #fecaca;
+  --color-alert-red-tile: #f87171;
+  --color-alert-red-tile-ink: #7f1d1d;
+  --color-alert-red-ink: #991b1b;
+  --color-red-tint: #fee2e2;
+  --color-red-ink: #b91c1c;
+  --color-alert-amber-surface: #fffbeb;
+  --color-alert-amber-border: #fcd34d;
+  --color-alert-amber-tile: #fbbf24;
+  --color-alert-amber-tile-ink: #78350f;
+  --color-amber-tint: #fef3c7;
+  --color-amber-ink: #92400e;
+
+  /* ------------------------------------------------------------------ *
+   * Task palette — swapped wholesale by Calm view (see [data-view=calm]).
+   * Each role is a fill (`task-*`) and an accent (`task-*-accent`).
+   * ------------------------------------------------------------------ */
+  --color-task-lilac: #e0e7ff;
+  --color-task-lilac-accent: #4f46e5;
+  --color-task-peach: #eef2ff;
+  --color-task-peach-accent: #6366f1;
+  --color-task-mint: #ccfbf1;
+  --color-task-mint-accent: #0d9488;
+  --color-task-sky: #f1f5f9;
+  --color-task-sky-accent: #64748b;
+  --color-task-butter: #f0fdfa;
+  --color-task-butter-accent: #0d9488;
+
+  /* ------------------------------------------------------------------ *
+   * Material 3 roles, remapped onto the palette above
+   * ------------------------------------------------------------------ */
+  --color-surface: #f7f8fb;
+  --color-surface-dim: #e2e8f0;
+  --color-surface-bright: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f8fafc;
+  --color-surface-container: #f1f5f9;
+  --color-surface-container-high: #e2e8f0;
+  --color-surface-container-highest: #cbd5e1;
+  --color-surface-variant: #f1f5f9;
+  --color-on-surface: #1e293b;
+  --color-on-surface-variant: #64748b;
+  --color-inverse-surface: #1e293b;
+  --color-inverse-on-surface: #ffffff;
+  --color-surface-tint: #4f46e5;
+
+  /* Outline / dividers */
+  --color-outline: #cbd5e1;
+  --color-outline-variant: #e2e8f0;
+
+  /* Primary — indigo */
+  --color-primary: #4f46e5;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #4f46e5;
+  --color-on-primary-container: #e0e7ff;
+  --color-primary-fixed: #e0e7ff;
+  --color-primary-fixed-dim: #c7d2fe;
+  --color-on-primary-fixed: #1e1b4b;
+  --color-on-primary-fixed-variant: #3730a3;
+  --color-inverse-primary: #a5b4fc;
+
+  /* Secondary — teal */
+  --color-secondary: #0d9488;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #ccfbf1;
+  --color-on-secondary-container: #0f766e;
+  --color-secondary-fixed: #ccfbf1;
+  --color-secondary-fixed-dim: #5eead4;
+  --color-on-secondary-fixed: #134e4a;
+  --color-on-secondary-fixed-variant: #0f766e;
+
+  /* Tertiary — indigo light */
+  --color-tertiary: #6366f1;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #eef2ff;
+  --color-on-tertiary-container: #3730a3;
+  --color-tertiary-fixed: #eef2ff;
+  --color-tertiary-fixed-dim: #c7d2fe;
+  --color-on-tertiary-fixed: #1e1b4b;
+  --color-on-tertiary-fixed-variant: #4338ca;
+
+  /* Error / critical — same hue as Urgent */
+  --color-error: oklch(0.55 0.2 25);
+  --color-on-error: #ffffff;
+  --color-error-container: oklch(0.97 0.025 25);
+  --color-on-error-container: oklch(0.45 0.17 25);
+
+  /* Background */
+  --color-background: #f7f8fb;
+  --color-on-background: #1e293b;
+
+  /* ------------------------------------------------------------------ *
+   * Functional support states (roster status pills)
+   * ------------------------------------------------------------------ */
+  --color-warning: #b45309;
+  --color-warning-container: #fffbeb;
+  --color-warning-border: #fde68a;
+  --color-warning-dot: #f59e0b;
+
+  --color-success: #0f766e;
+  --color-success-container: #f0fdfa;
+  --color-success-border: #99f6e4;
+  --color-success-dot: #14b8a6;
+
+  --color-accommodation: #4338ca;
+  --color-accommodation-container: #eef2ff;
+  --color-accommodation-border: #c7d2fe;
+  --color-accommodation-dot: #6366f1;
+
+  --color-neutral-pill: #334155;
+  --color-neutral-pill-container: #f1f5f9;
+  --color-neutral-pill-border: #e2e8f0;
+  --color-neutral-pill-dot: #64748b;
+
+  /* ------------------------------------------------------------------ *
+   * Severity scale (response-guide protocols + support-log entries)
+   * ------------------------------------------------------------------ */
+  --color-severity-mild: #b45309;
+  --color-severity-mild-container: #fffbeb;
+  --color-severity-mild-border: #fde68a;
+  --color-severity-mild-dot: #f59e0b;
+
+  --color-severity-moderate: #c2410c;
+  --color-severity-moderate-container: #fff7ed;
+  --color-severity-moderate-border: #fed7aa;
+  --color-severity-moderate-dot: #f97316;
+
+  --color-severity-severe: #be123c;
+  --color-severity-severe-container: #fff1f2;
+  --color-severity-severe-border: #fecdd3;
+  --color-severity-severe-dot: #f43f5e;
+
+  /* ------------------------------------------------------------------ *
+   * shadcn/ui semantic tokens (mapped onto the palette above)
+   * ------------------------------------------------------------------ */
+  --color-foreground: #1e293b;
+  --color-card: #ffffff;
+  --color-card-foreground: #1e293b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1e293b;
+  --color-primary-foreground: #ffffff;
+  --color-secondary-foreground: #ffffff;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-accent: #f1f5f9;
+  --color-accent-foreground: #1e293b;
+  --color-destructive: oklch(0.55 0.2 25);
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e2e8f0;
+  --color-input: #cbd5e1;
+  --color-ring: #6366f1;
+
+  --color-sidebar: #f7f8fb;
+  --color-sidebar-foreground: #1e293b;
+  --color-sidebar-primary: #4f46e5;
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: #e0e7ff;
+  --color-sidebar-accent-foreground: #1e293b;
+  --color-sidebar-border: #e2e8f0;
+  --color-sidebar-ring: #6366f1;
+
+  /* ------------------------------------------------------------------ *
+   * Motion — 0.2–0.4s ease, no bounce or loops (DESIGN.md → Interaction)
+   * ------------------------------------------------------------------ */
+  --animate-rise: rise 0.25s ease both;
+  --animate-msg-in: msg-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-thinking: thinking 1.2s ease-in-out infinite;
+
+  @keyframes msg-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Typing dots — the one deliberate loop, and only while waiting. */
+  @keyframes thinking {
+    0%,
+    80%,
+    100% {
+      opacity: 0.25;
+      transform: translateY(0);
+    }
+    40% {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/*
+  Calm view — "all task fills collapse to the slate fill; only the accent
+  distinguishes them". Set `data-view="calm"` on any ancestor (the layouts do
+  it from the view-mode store; Quiet Shield forces it).
+*/
+@layer base {
+  [data-view="calm"] {
+    --color-task-lilac: #f1f5f9;
+    --color-task-lilac-accent: #6366f1;
+    --color-task-peach: #f1f5f9;
+    --color-task-peach-accent: #6366f1;
+    --color-task-mint: #f1f5f9;
+    --color-task-sky: #f1f5f9;
+    --color-task-butter: #f1f5f9;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    text-wrap: pretty;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* Numeric data (tables, metrics, times) keeps columns aligned. */
+  :where(table, [data-tabular]) {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/*
+  Material Symbols Rounded icon primitive (see components/common/Icon.jsx).
+
+  Google's own `.material-symbols-rounded` class is NOT used: that stylesheet is
+  unlayered, so its `font-size: 24px` / `display: inline-block` would override
+  every Tailwind utility on the element. Keeping these defaults in the
+  `components` layer means utilities such as `text-[20px]` or `text-primary`
+  still win. `.icon-fill` switches to the filled glyph (status / emphasis).
+*/
+@layer components {
+  .icon {
+    display: inline-block;
+    font-family: "Material Symbols Rounded";
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    flex: none;
+
+    font-variation-settings:
+      "FILL" 0,
+      "wght" 400,
+      "GRAD" 0,
+      "opsz" 24;
+
+    font-feature-settings: "liga";
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .icon-fill {
+    font-variation-settings:
+      "FILL" 1,
+      "wght" 400,
+      "GRAD" 0,
+      "opsz" 24;
+  }
+
+}
+
+/* Hide scrollbar on horizontal strips */
+@utility scrollbar-none {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Thin scrollbar on horizontal strips */
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-outline-variant) transparent;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background-color: var(--color-outline-variant);
+  }
+}
